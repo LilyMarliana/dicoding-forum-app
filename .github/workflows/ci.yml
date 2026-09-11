@@ -25,6 +25,15 @@ jobs:
       - name: Run unit & integration tests
         run: npm test
 
+      - name: Debug - test login API directly
+        run: |
+          curl -i -X POST https://forum-api.dicoding.dev/v1/login \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$CYPRESS_TEST_EMAIL\",\"password\":\"$CYPRESS_TEST_PASSWORD\"}"
+        env:
+          CYPRESS_TEST_EMAIL: ${{ secrets.CYPRESS_TEST_EMAIL }}
+          CYPRESS_TEST_PASSWORD: ${{ secrets.CYPRESS_TEST_PASSWORD }}
+
       - name: Run end-to-end tests
         run: npm run e2e
         env:
