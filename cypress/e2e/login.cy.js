@@ -43,8 +43,39 @@ describe('Login spec', () => {
   });
 
   it('should be able to login with registered account and redirect to home page', () => {
-    cy.intercept('POST', '**/login').as('loginRequest');
-    cy.intercept('GET', '**/users/me').as('getProfileRequest');
+    // Catatan: response API di-stub (bukan hit API asli) karena
+    // forum-api.dicoding.dev memasang AWS WAF Bot/Account-Takeover
+    // Protection pada endpoint /login. Beberapa kali percobaan login
+    // berturut-turut dari runner CI terdeteksi sebagai pola bot dan
+    // di-block dengan CAPTCHA challenge (muncul sebagai HTTP 405 dengan
+    // header x-amzn-waf-action: captcha), bukan karena bug aplikasi.
+    // Stubbing membuat pengujian alur login tetap deterministik & stabil di CI.
+    cy.intercept('POST', '**/login', {
+      statusCode: 200,
+      body: {
+        status: 'success',
+        message: 'success',
+        data: {
+          token: 'fake-jwt-token-for-e2e-test',
+        },
+      },
+    }).as('loginRequest');
+
+    cy.intercept('GET', '**/users/me', {
+      statusCode: 200,
+      body: {
+        status: 'success',
+        message: 'success',
+        data: {
+          user: {
+            id: 'user-e2e',
+            name: 'E2E Test User',
+            email: 'e2e-test@example.com',
+            avatar: 'https://ui-avatars.com/api/?name=E2E+Test+User',
+          },
+        },
+      },
+    }).as('getProfileRequest');
 
     cy.env(['TEST_EMAIL', 'TEST_PASSWORD']).then(({ TEST_EMAIL, TEST_PASSWORD }) => {
       cy.get('input[type="email"]').type(TEST_EMAIL);
