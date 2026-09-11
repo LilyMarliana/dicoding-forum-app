@@ -30,7 +30,7 @@ describe('Login spec', () => {
   });
 
   it('should display alert when password is wrong', () => {
-    cy.env(['TEST_EMAIL']).then(({TEST_EMAIL}) => {
+    cy.env(['TEST_EMAIL']).then(({ TEST_EMAIL }) => {
       cy.get('input[type="email"]').type(TEST_EMAIL);
       cy.get('input[type="password"]').type('passwordsalah123');
 
@@ -43,12 +43,18 @@ describe('Login spec', () => {
   });
 
   it('should be able to login with registered account and redirect to home page', () => {
-    cy.env(['TEST_EMAIL', 'TEST_PASSWORD']).then(({TEST_EMAIL, TEST_PASSWORD}) => {
+    cy.intercept('POST', '**/login').as('loginRequest');
+    cy.intercept('GET', '**/users/me').as('getProfileRequest');
+
+    cy.env(['TEST_EMAIL', 'TEST_PASSWORD']).then(({ TEST_EMAIL, TEST_PASSWORD }) => {
       cy.get('input[type="email"]').type(TEST_EMAIL);
       cy.get('input[type="password"]').type(TEST_PASSWORD);
       cy.get('button').contains('Login').click();
 
-      cy.location('pathname', {timeout: 10000}).should('eq', '/');
+      cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
+      cy.wait('@getProfileRequest').its('response.statusCode').should('eq', 200);
+
+      cy.location('pathname', { timeout: 10000 }).should('eq', '/');
     });
   });
 });
