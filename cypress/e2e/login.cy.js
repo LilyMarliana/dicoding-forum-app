@@ -30,7 +30,7 @@ describe('Login spec', () => {
   });
 
   it('should display alert when password is wrong', () => {
-    cy.env(['TEST_EMAIL']).then(({ TEST_EMAIL }) => {
+    cy.env(['TEST_EMAIL']).then(({TEST_EMAIL}) => {
       cy.get('input[type="email"]').type(TEST_EMAIL);
       cy.get('input[type="password"]').type('passwordsalah123');
 
@@ -77,7 +77,7 @@ describe('Login spec', () => {
       },
     }).as('getProfileRequest');
 
-    cy.env(['TEST_EMAIL', 'TEST_PASSWORD']).then(({ TEST_EMAIL, TEST_PASSWORD }) => {
+    cy.env(['TEST_EMAIL', 'TEST_PASSWORD']).then(({TEST_EMAIL, TEST_PASSWORD}) => {
       cy.get('input[type="email"]').type(TEST_EMAIL);
       cy.get('input[type="password"]').type(TEST_PASSWORD);
       cy.get('button').contains('Login').click();
@@ -85,7 +85,7 @@ describe('Login spec', () => {
       cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
       cy.wait('@getProfileRequest').its('response.statusCode').should('eq', 200);
 
-      cy.location('pathname', { timeout: 10000 }).should('eq', '/');
+      cy.location('pathname', {timeout: 10000}).should('eq', '/');
     });
   });
 });
