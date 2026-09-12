@@ -27,34 +27,38 @@ describe('authUser thunk', () => {
   });
 
   describe('asyncSetAuthUser thunk', () => {
-    it('should dispatch showLoading, setAuthUser, and hideLoading actions when login succeeds', async () => {
-      const fakeToken = 'fake-token-123';
-      const fakeUser = {id: 'user-1', name: 'Marliana'};
-      api.login.mockResolvedValue(fakeToken);
-      api.putAccessToken.mockImplementation(() => {});
-      api.getOwnProfile.mockResolvedValue(fakeUser);
+    it('should dispatch setAuthUser between showLoading and hideLoading on success',
+        async () => {
+          const fakeToken = 'fake-token-123';
+          const fakeUser = {id: 'user-1', name: 'Marliana'};
+          api.login.mockResolvedValue(fakeToken);
+          api.putAccessToken.mockImplementation(() => {});
+          api.getOwnProfile.mockResolvedValue(fakeUser);
 
-      const dispatch = vi.fn();
-      await asyncSetAuthUser({email: 'marliana@mail.com', password: 'rahasia'})(dispatch);
+          const dispatch = vi.fn();
+          await asyncSetAuthUser({email: 'marliana@mail.com', password: 'rahasia'})(dispatch);
 
-      expect(api.login).toHaveBeenCalledWith({email: 'marliana@mail.com', password: 'rahasia'});
-      expect(api.putAccessToken).toHaveBeenCalledWith(fakeToken);
-      expect(dispatch).toHaveBeenCalledWith(showLoading());
-      expect(dispatch).toHaveBeenCalledWith(setAuthUser(fakeUser));
-      expect(dispatch).toHaveBeenCalledWith(hideLoading());
-    });
+          expect(api.login).toHaveBeenCalledWith({email: 'marliana@mail.com', password: 'rahasia'});
+          expect(api.putAccessToken).toHaveBeenCalledWith(fakeToken);
+          expect(dispatch).toHaveBeenCalledWith(showLoading());
+          expect(dispatch).toHaveBeenCalledWith(setAuthUser(fakeUser));
+          expect(dispatch).toHaveBeenCalledWith(hideLoading());
+        });
 
-    it('should dispatch showLoading and hideLoading (and not dispatch setAuthUser) when login fails', async () => {
-      api.login.mockRejectedValue({response: {data: {message: 'Email tidak ditemukan'}}});
+    it('should not dispatch setAuthUser and should alert when login fails',
+        async () => {
+          api.login.mockRejectedValue({response: {data: {message: 'Email tidak ditemukan'}}});
 
-      const dispatch = vi.fn();
-      await asyncSetAuthUser({email: 'salah@mail.com', password: 'salah'})(dispatch);
+          const dispatch = vi.fn();
+          await asyncSetAuthUser({email: 'salah@mail.com', password: 'salah'})(dispatch);
 
-      expect(dispatch).toHaveBeenCalledWith(showLoading());
-      expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({type: 'authUser/setAuthUser'}));
-      expect(dispatch).toHaveBeenCalledWith(hideLoading());
-      expect(window.alert).toHaveBeenCalledWith('Email tidak ditemukan');
-    });
+          expect(dispatch).toHaveBeenCalledWith(showLoading());
+          expect(dispatch).not.toHaveBeenCalledWith(
+              expect.objectContaining({type: 'authUser/setAuthUser'}),
+          );
+          expect(dispatch).toHaveBeenCalledWith(hideLoading());
+          expect(window.alert).toHaveBeenCalledWith('Email tidak ditemukan');
+        });
   });
 
   describe('asyncUnsetAuthUser thunk', () => {
@@ -70,17 +74,18 @@ describe('authUser thunk', () => {
   });
 
   describe('asyncRegisterUser thunk', () => {
-    it('should return true and call registerApi with correct payload when registration succeeds', async () => {
-      api.register.mockResolvedValue();
+    it('should call register API and return true when registration succeeds',
+        async () => {
+          api.register.mockResolvedValue();
 
-      const dispatch = vi.fn();
-      const payload = {name: 'Marliana', email: 'marliana@mail.com', password: 'rahasia'};
-      const result = await asyncRegisterUser(payload)(dispatch);
+          const dispatch = vi.fn();
+          const payload = {name: 'Marliana', email: 'marliana@mail.com', password: 'rahasia'};
+          const result = await asyncRegisterUser(payload)(dispatch);
 
-      expect(api.register).toHaveBeenCalledWith(payload);
-      expect(result).toBe(true);
-      expect(dispatch).toHaveBeenCalledWith(showLoading());
-      expect(dispatch).toHaveBeenCalledWith(hideLoading());
-    });
+          expect(api.register).toHaveBeenCalledWith(payload);
+          expect(result).toBe(true);
+          expect(dispatch).toHaveBeenCalledWith(showLoading());
+          expect(dispatch).toHaveBeenCalledWith(hideLoading());
+        });
   });
 });

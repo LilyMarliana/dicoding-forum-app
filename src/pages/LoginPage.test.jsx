@@ -23,15 +23,17 @@ vi.mock('../states/authUser/action', () => ({
  * skenario pengujian LoginPage
  *
  * - LoginPage
- *   - should display login form with email and password input when user is not authenticated
- *   - should call dispatch with asyncSetAuthUser thunk containing typed email and password when form is submitted
+ *   - should display login form when user is not authenticated
+ *   - should call dispatch with asyncSetAuthUser thunk when form is submitted
  */
 describe('LoginPage', () => {
   beforeEach(() => {
-    reactRedux.useSelector.mockImplementation((selector) => selector({authUser: null}));
+    reactRedux.useSelector.mockImplementation(
+        (selector) => selector({authUser: null}),
+    );
   });
 
-  it('should display login form with email and password input when user is not authenticated', () => {
+  it('should display login form when user is not authenticated', () => {
     reactRedux.useDispatch.mockReturnValue(vi.fn());
 
     render(<LoginPage />, {wrapper: MemoryRouter});
@@ -41,7 +43,7 @@ describe('LoginPage', () => {
     expect(screen.getByRole('button', {name: 'Login'})).toBeInTheDocument();
   });
 
-  it('should call dispatch with asyncSetAuthUser thunk containing typed email and password when form is submitted', async () => {
+  it('should call dispatch with asyncSetAuthUser thunk when form is submitted', async () => {
     const dispatch = vi.fn();
     reactRedux.useDispatch.mockReturnValue(dispatch);
     const user = userEvent.setup();
@@ -52,7 +54,10 @@ describe('LoginPage', () => {
     await user.type(screen.getByLabelText('Password'), 'rahasia123');
     await user.click(screen.getByRole('button', {name: 'Login'}));
 
-    expect(asyncSetAuthUser).toHaveBeenCalledWith({email: 'marliana@mail.com', password: 'rahasia123'});
+    expect(asyncSetAuthUser).toHaveBeenCalledWith({
+      email: 'marliana@mail.com',
+      password: 'rahasia123',
+    });
     expect(dispatch).toHaveBeenCalled();
   });
 });

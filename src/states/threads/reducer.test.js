@@ -60,7 +60,7 @@ describe('threadsReducer', () => {
     expect(nextState[0].downVotesBy).toEqual([]);
   });
 
-  it('should add userId to downVotesBy and remove it from upVotesBy when voteType is "down"', () => {
+  it('should move userId from upVotesBy to downVotesBy on down vote', () => {
     const initialState = [
       {id: 'thread-1', title: 'Thread', upVotesBy: ['user-1'], downVotesBy: []},
     ];

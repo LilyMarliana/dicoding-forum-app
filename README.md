@@ -1,16 +1,46 @@
-# React + Vite
+# Forum Diskusi (Dicoding Forum App)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi forum diskusi yang dibangun sebagai submission akhir kelas **"Menjadi React Web Developer Expert"** dari Dicoding. Melanjutkan proyek Forum Diskusi dari submission sebelumnya, dengan tambahan Automation Testing, CI/CD, dan React Ecosystem.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite
+- Redux Toolkit + React Redux
+- React Router DOM
+- React Bootstrap
+- Axios
 
-## React Compiler
+## Fitur
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Registrasi & login pengguna
+- Membuat, melihat, dan berdiskusi di thread
+- Vote (upvote/downvote) pada thread
+- Leaderboard pengguna
+- Filter thread berdasarkan kategori
 
-## Expanding the ESLint configuration
+## Menjalankan Proyek
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+## Menjalankan Pengujian
+
+Unit & integration test (Vitest + React Testing Library):
+
+```bash
+npm test
+```
+
+End-to-end test (Cypress):
+
+```bash
+npm run e2e
+```
+
+## Deployment
+
+Aplikasi ini di-deploy otomatis ke Vercel setiap ada perubahan ke branch `master`, melalui pipeline CI/CD dengan GitHub Actions untuk pengujian otomatis dan Vercel untuk continuous deployment.
+
+**URL Vercel**: _(akan diisi setelah proses deploy)_
